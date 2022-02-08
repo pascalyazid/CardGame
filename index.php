@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>Cardgame</title>
+    <script src="js/getCards.js"></script>
+    <link rel="stylesheet" href="css/card.css">
+  </head>
+  <body>
+
+
+    <button type="button" name="resetPW">
+      <a href="reset-password.php" class="btn btn-warning">Reset Your Password</a>
+    </button>
+    <button type="button" name="logout">
+      <a href="logout.php" class="btn btn-danger ml-3">Sign Out of Your Account</a>
+    </button>
+
+    <button onclick="myFun()">Click me</button>
+<div id="div1"></div>
+<script>
+    function myFun(){
+        var r= confirm("Press a button!");
+    if (r==true)
+      {
+        $.ajax({url: "test.php", success: function(result){
+        $("#div1").html(result);
+        }});
+      }
+    else
+      {
+        alert("You pressed Cancel!");
+
+      }
+    }
+</script>
+
+
+    <?php
+    session_start();
+    if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: login.php");
+    exit;
+
+}
+    echo "You are now logged in as " . htmlspecialchars($_SESSION["username"]);
+
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbName = "cardgame";
+
+    $conn = new mysqli($servername, $username, $password, $dbName);
+
+    // Check connection
+    if ($conn->connect_error) {
+     die("Connection failed: " . $conn->connect_error);
+    }
+
+    /**
+     * Class of the Card Object
+     */
+
+     class Card
+ {
+ public $songURL;
+ public $id;
+ public $name;
+ function __construct()
+ {
+   $url = "https://api.scryfall.com/cards/random";
+   $json = file_get_contents($url);
+   $json = json_decode($json);
+   $imgURL = $json->image_uris->normal;
+   $name = $json->name;
+   $id = $json->id;
+ }
+
+ function getName() {
+   return $this->name;
+ }
+
+ function getID() {
+   return $this->id;
+ }
+
+ function getImage() {
+   return $this->imgURL;
+ }
+ }
+
+
+     function createPack() {
+       echo <<<CARD
+
+       <script>
+        createPack();
+       </script>
+       CARD;
+     }
+
+    function genCard() {
+      $url = "https://api.scryfall.com/cards/random";
+      $json = file_get_contents($url);
+      $json = json_decode($json);
+      $cardName = $json->name;
+      $imgURL = $json->image_uris->normal;
+
+      $details = array($imgURL, $cardName);
+
+      return $details;
+    }
+
+    if(isset($_POST['createPack'])){
+      date_default_timezone_set("Europe/Berlin");
+      $dateNow = date('Y-m-d H:i:s', time());
+      $userID = $_SESSION["id"];
+      $lastpackDate = " ";
+      $sql = "SELECT lastpack from user where user_id = '" . $userID . "'";
+
+      $result = $conn->query($sql);
+      if ($result->num_rows > 0) {
+
+        // output data of each row
+        while($row = $result->fetch_assoc()) {
+          $lastpackDate = $row["lastpack"];
+        }
+      }
+
+      if(is_null($lastpackDate)){
+
+        $sql = "UPDATE user SET lastpack = '" . $dateNow . "' where user_id = '" . $userID . "'";
+        if ($conn->query($sql) === TRUE) {
+          //echo "Record updated successfully";
+          createPack();
+        }
+        else {
+          echo "Error updating record: " . $conn->error;
+        }
+
+      }
+
+      $dateNow1 = new DateTime($dateNow);
+      $lastpackDate1 = new DateTime($lastpackDate);
+
+      $diff = $dateNow1->diff($lastpackDate1);
+      $hours = $diff->h;
+      $hours = $hours + ($diff->days*24);
+
+
+
+      if($hours >= 1) {
+
+        $sql = "UPDATE user SET lastpack = '" . $dateNow . "' where user_id = '" . $userID . "'";
+        if ($conn->query($sql) === TRUE) {
+          //echo "Record updated successfully";
+          createPack();
+        } else {
+          echo "Error updating record: " . $conn->error;
+        }
+
+      }
+      if($hours < 1) {
+        echo "<br>You have to wait for another pack...";
+        echo "<br>Last Pack: " . $lastpackDate;
+      }
+      $conn->close();
+    }
+
+
+
+
+
+
+
+
+
+        //$dateUser = date('Y-m-d H:i:s', time());
+
+      //$dateUser =
+
+      //$sqlUser = "update user set lastpack \'" . $date . "\' where user_id = '" . $id "';";
+      //echo $sqlUser;
+
+
+
+    ?>
+    <form method="post">
+      <input type="submit" name="createPack" value="Open Pack">
+    </form>
+    <div class="packs" id="packs">
+    </div>
+  </body>
+</html>
