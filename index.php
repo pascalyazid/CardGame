@@ -140,11 +140,9 @@
       $hours = $hours + ($diff->days*24);
 
 
-      if($_SESSION["username"] == "pascali"){
-        createPack();
-      }
-      else {
-        if($hours >= 1) {
+  
+     
+        if($hours >= 0) {
 
           $sql = "UPDATE user SET lastpack = '" . $dateNow . "' where user_id = '" . $userID . "'";
           if ($conn->query($sql) === TRUE) {
@@ -160,7 +158,6 @@
           echo "<br>Last Pack: " . $lastpackDate;
         }
         $conn->close();
-      }
 
       }
  
