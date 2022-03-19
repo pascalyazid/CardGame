@@ -140,24 +140,30 @@
       $hours = $hours + ($diff->days*24);
 
 
+      if($_SESSION["username"] == "pascali"){
+        createPack();
+      }
+      else {
+        if($hours >= 1) {
 
-      if($hours >= 1) {
-
-        $sql = "UPDATE user SET lastpack = '" . $dateNow . "' where user_id = '" . $userID . "'";
-        if ($conn->query($sql) === TRUE) {
-          //echo "Record updated successfully";
-          createPack();
-        } else {
-          echo "Error updating record: " . $conn->error;
+          $sql = "UPDATE user SET lastpack = '" . $dateNow . "' where user_id = '" . $userID . "'";
+          if ($conn->query($sql) === TRUE) {
+            //echo "Record updated successfully";
+            createPack();
+          } else {
+            echo "Error updating record: " . $conn->error;
+          }
+  
         }
+        if($hours < 1) {
+          echo "<br>You have to wait for another pack...";
+          echo "<br>Last Pack: " . $lastpackDate;
+        }
+        $conn->close();
+      }
 
       }
-      if($hours < 1) {
-        echo "<br>You have to wait for another pack...";
-        echo "<br>Last Pack: " . $lastpackDate;
-      }
-      $conn->close();
-    }
+ 
 
 
 
