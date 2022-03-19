@@ -68,9 +68,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             header("location: index.php");
                         } else{
                             // Password is not valid, display a generic error message
-                            echo $hashed_password . "<br>";
-                            echo $password;
-                            $login_err = "No index";
+                            $login_err = "Wrong password or username";
                         }
                     }
                 } else{

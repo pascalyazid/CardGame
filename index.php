@@ -92,24 +92,29 @@
 
 
      function createPack() {
+      $servername = "eu-cdbr-west-02.cleardb.net";
+      $username = "b3ff51d972250f";
+      $password = "bf0598af";
+      $dbName = "heroku_2f94a8f46a09c1a";
+  
+      $conn = new mysqli($servername, $username, $password, $dbName);
        for ($i=0; $i < 3; $i++) {
-         echo "Card";
-         echo "<script>getCard('" . genCard() . "')</script>";
+         echo "<script>getCard('" . genCard($conn) . "')</script>";
        }
 
      }
 
-    function genCard() {
+    function genCard($conn) {
       $url = "https://api.scryfall.com/cards/random";
       $json = file_get_contents($url);
       $json = json_decode($json);
       $cardName = $json->name;
       if(isset($json->image_uris->normal)) {
+        saveCards($json->id, $conn);
         return $json->uri;
       }
       else{
-        saveCards();
-        genCard();
+        genCard($conn);
       }
     }
 
@@ -151,7 +156,7 @@
 
 
 
-      if($hours >= 0) {
+      if($hours >= 1) {
 
         $sql = "UPDATE user SET lastpack = '" . $dateNow . "' where user_id = '" . $userID . "'";
         if ($conn->query($sql) === TRUE) {
@@ -162,7 +167,7 @@
         }
 
       }
-      if($hours >= 1) {
+      if($hours < 1) {
         echo "<br>You have to wait for another pack...";
         echo "<br>Last Pack: " . $lastpackDate;
       }
@@ -183,13 +188,18 @@
       //$sqlUser = "update user set lastpack \'" . $date . "\' where user_id = '" . $id "';";
       //echo $sqlUser;
 
-      function saveCards(card_id) {
-        $sql = "INSERT INTO card_user (card_id, user_id) VALUES('" . card_user . "','" . $_SESSION["username"] . "')";
-        echo $sql;
-        }
-        //$urls_array =  $urls->find('a');
-      }
 
+        //$urls_array =  $urls->find('a');
+    
+      function saveCards ($card_id, $conn) {
+
+        $sql1 = "INSERT IGNORE INTO card values('" . $card_id . "', 'https://api.scryfall.com/cards/" . $card_id . "')";
+        $sql2 = "INSERT IGNORE INTO card_user(card_id, user_id) VALUES ('" . $card_id . "', '" . $_SESSION["id"] . "')";
+        $conn->query($sql1);
+        $conn->query($sql2);
+        
+          
+  }
     ?>
     <form method="post">
       <input type="submit" name="createPack" value="Open Pack">
