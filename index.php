@@ -17,25 +17,9 @@
     <button type="button" name="logout">
       <a href="logout.php" class="btn btn-danger ml-3">Sign Out of Your Account</a>
     </button>
-      
-    <button onclick="myFun()">Click me</button>
-<div id="div1"></div>
-<script>
-    function myFun(){
-        var r= confirm("Press a button!");
-    if (r==true)
-      {
-        $.ajax({url: "test.php", success: function(result){
-        $("#div1").html(result);
-        }});
-      }
-    else
-      {
-        alert("You pressed Cancel!");
-
-      }
-    }
-</script>
+    <button type="button" name="logout">
+      <a href="inventory.php" class="btn btn-danger ml-3">Your Collection</a>
+    </button>
 
 
     <?php
@@ -103,14 +87,14 @@
        }
 
      }
-
+     
     function genCard($conn) {
       $url = "https://api.scryfall.com/cards/random";
       $json = file_get_contents($url);
       $json = json_decode($json);
       $cardName = $json->name;
       if(isset($json->image_uris->normal)) {
-        saveCards($json->id, $conn);
+        saveCards($json->id, $conn, $json->image_uris->normal);
         return $json->uri;
       }
       else{
@@ -119,6 +103,7 @@
     }
 
     if(isset($_POST['createPack'])){
+      unset($_POST['createPack']);
       date_default_timezone_set("Europe/Berlin");
       $dateNow = date('Y-m-d H:i:s', time());
       $userID = $_SESSION["id"];
@@ -191,9 +176,9 @@
 
         //$urls_array =  $urls->find('a');
     
-      function saveCards ($card_id, $conn) {
+      function saveCards ($card_id, $conn, $img_url) {
 
-        $sql1 = "INSERT IGNORE INTO card values('" . $card_id . "', 'https://api.scryfall.com/cards/" . $card_id . "')";
+        $sql1 = "INSERT IGNORE INTO card values('" . $card_id . "', 'https://api.scryfall.com/cards/" . $card_id . "', '" . $img_url . "')";
         $sql2 = "INSERT IGNORE INTO card_user(card_id, user_id) VALUES ('" . $card_id . "', '" . $_SESSION["id"] . "')";
         $conn->query($sql1);
         $conn->query($sql2);
