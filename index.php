@@ -92,12 +92,11 @@
 
 
      function createPack() {
-       echo <<<CARD
+       for ($i=0; $i < 3; $i++) {
+         echo "Card";
+         echo "<script>getCard('" . genCard() . "')</script>";
+       }
 
-       <script>
-        createPack();
-       </script>
-       CARD;
      }
 
     function genCard() {
@@ -105,11 +104,13 @@
       $json = file_get_contents($url);
       $json = json_decode($json);
       $cardName = $json->name;
-      $imgURL = $json->image_uris->normal;
-
-      $details = array($imgURL, $cardName);
-
-      return $details;
+      if(isset($json->image_uris->normal)) {
+        return $json->uri;
+      }
+      else{
+        saveCards();
+        genCard();
+      }
     }
 
     if(isset($_POST['createPack'])){
@@ -150,7 +151,7 @@
 
 
 
-      if($hours >= 1) {
+      if($hours >= 0) {
 
         $sql = "UPDATE user SET lastpack = '" . $dateNow . "' where user_id = '" . $userID . "'";
         if ($conn->query($sql) === TRUE) {
@@ -161,7 +162,7 @@
         }
 
       }
-      if($hours < 1) {
+      if($hours >= 1) {
         echo "<br>You have to wait for another pack...";
         echo "<br>Last Pack: " . $lastpackDate;
       }
@@ -179,11 +180,15 @@
         //$dateUser = date('Y-m-d H:i:s', time());
 
       //$dateUser =
-
       //$sqlUser = "update user set lastpack \'" . $date . "\' where user_id = '" . $id "';";
       //echo $sqlUser;
 
-
+      function saveCards(card_id) {
+        $sql = "INSERT INTO card_user (card_id, user_id) VALUES('" . card_user . "','" . $_SESSION["username"] . "')";
+        echo $sql;
+        }
+        //$urls_array =  $urls->find('a');
+      }
 
     ?>
     <form method="post">

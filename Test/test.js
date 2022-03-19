@@ -1,14 +1,12 @@
-  var cards = [];
+var cards = [];
+$(document).ready(function() {
+  //  createPack();
+});
 
-
-
-function addListener() {
-  var openButton = document.getElementById("buttonCreate");
-  openButton.addEventListener("click", function() {
-    createPack();
-  });
+function getTest(){
+  var test = document.getElementById('test');
+  console.log(test);
 }
-
 
 function setCard(data) {
   id = data.id;
@@ -23,6 +21,11 @@ function setCard(data) {
   let cardInner = document.createElement('div');
   cardInner.classList.add('card-inner');
 
+  let cardURL = document.createElement('p');
+  cardURL.innerHTML = "https://api.scryfall.com/cards/" + id;
+  cardURL.setAttribute('id', 'cardURL');
+  card.appendChild(cardURL);
+
   let imageContainer = document.createElement('div');
   imageContainer.classList.add('card-front');
 
@@ -34,6 +37,11 @@ function setCard(data) {
 
   let backContainer = document.createElement('div');
   backContainer.classList.add('card-back');
+  let test = document.createElement('p');
+  test.setAttribute('id', 'test');
+  test.innerHTML = "Gaggi";
+  test.hidden = true;
+  backContainer.append(test);
 
   let backImage = document.createElement('img');
   backImage.style.width = "350px";
@@ -51,7 +59,9 @@ function setCard(data) {
   packs.append(card);
 }
 
-function getCard(url) {
+function getCard() {
+  url = "https://api.scryfall.com/cards/random";
+
   $.getJSON(url).done(function(data) {
     if(data.image_uris === undefined) {
       console.log("Image is undefined");
@@ -67,9 +77,13 @@ function getCard(url) {
 
 
 
-function createPack(card0, card1, card2) {
+function createPack() {
+      while(packs.firstChild) {
+        packs.removeChild(packs.firstChild);
+      }
     for (var i = 0; i < 3; i++) {
-      getCard(i);
+      getCard();
 
   }
+
 }
