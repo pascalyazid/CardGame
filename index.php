@@ -17,7 +17,7 @@
     <button type="button" name="logout">
       <a href="logout.php" class="btn btn-danger ml-3">Sign Out of Your Account</a>
     </button>
-
+      
     <button onclick="myFun()">Click me</button>
 <div id="div1"></div>
 <script>
@@ -41,10 +41,9 @@
     <?php
     session_start();
     if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-    header("location: login.php");
-    exit;
-
-}
+      header("location: login.php");
+      exit;
+    }
     echo "You are now logged in as " . htmlspecialchars($_SESSION["username"]);
 
     $servername = "eu-cdbr-west-02.cleardb.net";
