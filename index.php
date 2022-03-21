@@ -142,7 +142,7 @@
 
   
      
-        if($hours >= 0) {
+        if($hours >= 1) {
 
           $sql = "UPDATE user SET lastpack = '" . $dateNow . "' where user_id = '" . $userID . "'";
           if ($conn->query($sql) === TRUE) {
