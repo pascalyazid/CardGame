@@ -12,7 +12,7 @@ function addListener() {
 
 function setCard(data) {
   id = data.id;
-  imageURL = data.image_uris.normal;
+  imageURL = data.image_uris.border_crop;
   artist = data.artist;
   marketID = data.cardmarket_id;
   details = [imageURL, artist, marketID];

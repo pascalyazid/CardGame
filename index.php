@@ -5,12 +5,19 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <title>Cardgame</title>
+    <style>
+        body {
+            background-image: url('http://localhost/CardGame/images/1141048.jpg');
+        }
+        
+    </style>
     <script src="js/getCards.js"></script>
     <link rel="stylesheet" href="css/card.css">
   </head>
   <body>
 
-
+    <div class="data">
+    <div class="menue">
     <button type="button" name="resetPW">
       <a href="reset-password.php" class="btn btn-warning">Reset Your Password</a>
     </button>
@@ -20,9 +27,12 @@
     <button type="button" name="logout">
       <a href="inventory.php" class="btn btn-danger ml-3">Your Collection</a>
     </button>
+    </div>
+
 
 
     <?php
+    require_once "config.php";
     session_start();
     if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       header("location: login.php");
@@ -30,75 +40,36 @@
     }
     echo "You are now logged in as " . htmlspecialchars($_SESSION["username"]);
 
-    $servername = "eu-cdbr-west-02.cleardb.net";
-    $username = "b3ff51d972250f";
-    $password = "bf0598af";
-    $dbName = "heroku_2f94a8f46a09c1a";
 
-    $conn = new mysqli($servername, $username, $password, $dbName);
 
     // Check connection
-    if ($conn->connect_error) {
-     die("Connection failed: " . $conn->connect_error);
+    if ($link->connect_error) {
+     die("Connection failed: " . $link->connect_error);
     }
 
-    /**
-     * Class of the Card Object
-     */
-
-     class Card
- {
- public $songURL;
- public $id;
- public $name;
- function __construct()
- {
-   $url = "https://api.scryfall.com/cards/random";
-   $json = file_get_contents($url);
-   $json = json_decode($json);
-   $imgURL = $json->image_uris->normal;
-   $name = $json->name;
-   $id = $json->id;
- }
-
- function getName() {
-   return $this->name;
- }
-
- function getID() {
-   return $this->id;
- }
-
- function getImage() {
-   return $this->imgURL;
- }
- }
-
-
-     function createPack() {
+     function createPack($link) {
       $servername = "eu-cdbr-west-02.cleardb.net";
       $username = "b3ff51d972250f";
       $password = "bf0598af";
       $dbName = "heroku_2f94a8f46a09c1a";
   
-      $conn = new mysqli($servername, $username, $password, $dbName);
        for ($i=0; $i < 3; $i++) {
-         echo "<script>getCard('" . genCard($conn) . "')</script>";
+         echo "<script>getCard('" . genCard($link) . "')</script>";
        }
 
      }
      
-    function genCard($conn) {
+    function genCard($link) {
       $url = "https://api.scryfall.com/cards/random";
       $json = file_get_contents($url);
       $json = json_decode($json);
       $cardName = $json->name;
-      if(isset($json->image_uris->normal)) {
-        saveCards($json->id, $conn, $json->image_uris->normal);
+      if(isset($json->image_uris->border_crop)) {
+        saveCards($json->id, $json->image_uris->border_crop, $link);
         return $json->uri;
       }
       else{
-        genCard($conn);
+        genCard();
       }
     }
 
@@ -110,7 +81,7 @@
       $lastpackDate = " ";
       $sql = "SELECT lastpack from user where user_id = '" . $userID . "'";
 
-      $result = $conn->query($sql);
+      $result = $link->query($sql);
       if ($result->num_rows > 0) {
 
         // output data of each row
@@ -122,12 +93,12 @@
       if(is_null($lastpackDate)){
 
         $sql = "UPDATE user SET lastpack = '" . $dateNow . "' where user_id = '" . $userID . "'";
-        if ($conn->query($sql) === TRUE) {
+        if ($link->query($sql) === TRUE) {
           //echo "Record updated successfully";
-          createPack();
+          createPack($link);
         }
         else {
-          echo "Error updating record: " . $conn->error;
+          echo "Error updating record: " . $link->error;
         }
 
       }
@@ -142,14 +113,14 @@
 
   
      
-        if($hours >= 1) {
+        if($hours >= 0) {
 
           $sql = "UPDATE user SET lastpack = '" . $dateNow . "' where user_id = '" . $userID . "'";
-          if ($conn->query($sql) === TRUE) {
+          if ($link->query($sql) === TRUE) {
             //echo "Record updated successfully";
-            createPack();
+            createPack($link);
           } else {
-            echo "Error updating record: " . $conn->error;
+            echo "Error updating record: " . $link->error;
           }
   
         }
@@ -157,37 +128,19 @@
           echo "<br>You have to wait for another pack...";
           echo "<br>Last Pack: " . $lastpackDate;
         }
-        $conn->close();
+        $link->close();
 
       }
- 
-
-
-
-
-
-
-
-
-
-        //$dateUser = date('Y-m-d H:i:s', time());
-
-      //$dateUser =
-      //$sqlUser = "update user set lastpack \'" . $date . "\' where user_id = '" . $id "';";
-      //echo $sqlUser;
-
-
-        //$urls_array =  $urls->find('a');
     
-      function saveCards ($card_id, $conn, $img_url) {
-
+      function saveCards ($card_id, $img_url, $link) {
+        
         $sql1 = "INSERT IGNORE INTO card values('" . $card_id . "', 'https://api.scryfall.com/cards/" . $card_id . "', '" . $img_url . "')";
         $sql2 = "INSERT IGNORE INTO card_user(card_id, user_id) VALUES ('" . $card_id . "', '" . $_SESSION["id"] . "')";
-        $conn->query($sql1);
-        $conn->query($sql2);
+        $link->query($sql1);
+        $link->query($sql2);
         
           
-  }
+      }
     ?>
     <form method="post">
       <input type="submit" name="createPack" value="Open Pack">
@@ -195,4 +148,6 @@
     <div class="packs" id="packs">
     </div>
   </body>
+    </div>
+
 </html>

@@ -8,6 +8,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventar</title>
+    <style>
+        body {
+            background-color: black;
+        }
+        
+    </style>
 </head>
 <body>
     <div class="nav">
@@ -22,11 +28,13 @@
         </button>
     </div>
     <?php
-                    session_start();
-                    if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-                      header("location: login.php");
-                      exit;
-                    }
+
+        require_once "config.php";
+        session_start();
+        if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+            header("location: login.php");
+            exit;
+        }
                     echo "You are now logged in as " . htmlspecialchars($_SESSION["username"]);
     ?>
     <?php
@@ -40,6 +48,7 @@
                 //echo $query;
                 $counter = 0;
                 if ($result = mysqli_query($conn, $query)) {
+
                     // Fetch one and one row
                     
                     while ($row = mysqli_fetch_row($result)) {
