@@ -2,34 +2,53 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <title>Cardgame</title>
-    <script src="js/getCards.js"></script>
-    <link rel="stylesheet" href="css/card.css">
-  </head>
-  <body>
-
-
-    <button type="button" name="resetPW">
-      <a href="reset-password.php" class="btn btn-warning">Reset Your Password</a>
-    </button>
-    <button type="button" name="logout">
-      <a href="logout.php" class="btn btn-danger ml-3">Sign Out of Your Account</a>
-    </button>
-    <button type="button" name="logout">
-      <a href="inventory.php" class="btn btn-danger ml-3">Your Collection</a>
-    </button>
-
-
     <?php
     session_start();
     if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       header("location: login.php");
       exit;
     }
-    echo "You are now logged in as " . htmlspecialchars($_SESSION["username"]);
+    ?>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>Cardgame</title>
+    <script src="js/getCards.js"></script>
+    <link rel="stylesheet" href="css/card.css">
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <div class="nav">
+      <div class="collection">
+        <button type="button" name="collection" class="button-9">
+          <a href="inventory.php" class="b-Link">Your Collection</a>
+        </button>
+      </div>
 
+      <div class="account">
+        <button type="button" name="resetPW" class="button-9">
+          <a href="reset-password.php" class="b-Link">Reset Your Password</a>
+        </button>
+        <div class="dropdown">
+          <button class="dropbtn">Account</button>
+          <div class="dropdown-content">
+            <p class="username"><?php echo htmlspecialchars($_SESSION["username"]);?></p>
+            <a href="logout.php">Sign out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+      <div class="open">
+        <form method="post">
+          <input type="submit" name="createPack" value="Open Pack" class="button-9">
+        </form>
+      </div>
+
+
+    <?php
     $servername = "eu-cdbr-west-02.cleardb.net";
     $username = "b3ff51d972250f";
     $password = "bf0598af";
@@ -80,14 +99,14 @@
       $username = "b3ff51d972250f";
       $password = "bf0598af";
       $dbName = "heroku_2f94a8f46a09c1a";
-  
+
       $conn = new mysqli($servername, $username, $password, $dbName);
        for ($i=0; $i < 3; $i++) {
          echo "<script>getCard('" . genCard($conn) . "')</script>";
        }
 
      }
-     
+
     function genCard($conn) {
       $url = "https://api.scryfall.com/cards/random";
       $json = file_get_contents($url);
@@ -140,8 +159,8 @@
       $hours = $hours + ($diff->days*24);
 
 
-  
-     
+
+
         if($hours >= 1) {
 
           $sql = "UPDATE user SET lastpack = '" . $dateNow . "' where user_id = '" . $userID . "'";
@@ -151,16 +170,18 @@
           } else {
             echo "Error updating record: " . $conn->error;
           }
-  
+
         }
         if($hours < 1) {
+          echo "<div class='message'>";
           echo "<br>You have to wait for another pack...";
           echo "<br>Last Pack: " . $lastpackDate;
+          echo "</div>";
         }
         $conn->close();
 
       }
- 
+
 
 
 
@@ -178,20 +199,18 @@
 
 
         //$urls_array =  $urls->find('a');
-    
+
       function saveCards ($card_id, $conn, $img_url) {
 
         $sql1 = "INSERT IGNORE INTO card values('" . $card_id . "', 'https://api.scryfall.com/cards/" . $card_id . "', '" . $img_url . "')";
         $sql2 = "INSERT IGNORE INTO card_user(card_id, user_id) VALUES ('" . $card_id . "', '" . $_SESSION["id"] . "')";
         $conn->query($sql1);
         $conn->query($sql2);
-        
-          
+
+
   }
     ?>
-    <form method="post">
-      <input type="submit" name="createPack" value="Open Pack">
-    </form>
+
     <div class="packs" id="packs">
     </div>
   </body>
