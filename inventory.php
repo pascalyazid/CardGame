@@ -46,10 +46,7 @@
     </div>
 
     <?php
-                $servername = "eu-cdbr-west-02.cleardb.net";
-                $username = "b3ff51d972250f";
-                $password = "bf0598af";
-                $dbName = "heroku_2f94a8f46a09c1a";
+                include 'connect.php';
 
                 $conn = new mysqli($servername, $username, $password, $dbName);
                 $query = "SELECT img_url from card where card_id in (select card_id from card_user where user_id='" . $_SESSION["id"] . "')";

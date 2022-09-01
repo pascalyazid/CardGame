@@ -13,7 +13,6 @@
     <title>Cardgame</title>
     <script src="js/getCards.js"></script>
     <link rel="stylesheet" href="css/card.css">
-    <link rel="stylesheet" href="/css/style.css">
   </head>
   <body>
     <div class="nav">
@@ -61,46 +60,11 @@
      die("Connection failed: " . $conn->connect_error);
     }
 
-    /**
-     * Class of the Card Object
-     */
-
-     class Card
- {
- public $songURL;
- public $id;
- public $name;
- function __construct()
- {
-   $url = "https://api.scryfall.com/cards/random";
-   $json = file_get_contents($url);
-   $json = json_decode($json);
-   $imgURL = $json->image_uris->normal;
-   $name = $json->name;
-   $id = $json->id;
- }
-
- function getName() {
-   return $this->name;
- }
-
- function getID() {
-   return $this->id;
- }
-
- function getImage() {
-   return $this->imgURL;
- }
- }
-
 
      function createPack() {
-      $servername = "eu-cdbr-west-02.cleardb.net";
-      $username = "b3ff51d972250f";
-      $password = "bf0598af";
-      $dbName = "heroku_2f94a8f46a09c1a";
 
-      $conn = new mysqli($servername, $username, $password, $dbName);
+       include 'connect.php';
+
        for ($i=0; $i < 3; $i++) {
          echo "<script>getCard('" . genCard($conn) . "')</script>";
        }
