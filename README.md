@@ -5,4 +5,4 @@ Users can open a pack of three cards every hour.
 
 Those three cards will be added to their collection.
 
-https://cardcollectionmagic.herokuapp.com/index.php
+https://pascalyazid.static-access.net/CardGame/index.php
