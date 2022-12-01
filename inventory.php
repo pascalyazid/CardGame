@@ -10,7 +10,7 @@
     <title>Inventar</title>
     <style>
         body {
-            background-image: url('http://localhost/CardGame/images/wood-texture-background-free-vector.jpg');
+            background-image: url("images/wood_texture.jpg");
         }
 
     </style>
