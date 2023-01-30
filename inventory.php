@@ -15,15 +15,6 @@
 
     </style>
 </head>
-<?php
-
-    require_once "config.php";
-    session_start();
-    if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
-        header("location: login.php");
-        exit;
-    }
-?>
 <body>
     <div class="nav">
       <div class="home">
@@ -46,13 +37,23 @@
     </div>
 
     <?php
-                include 'connect.php';
+    require_once "config.php";
+        session_start();
+        if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+          header("location: login.php");
+          exit;
+        }
 
-                $conn = new mysqli($servername, $username, $password, $dbName);
+
+
+        // Check connection
+        if ($link->connect_error) {
+         die("Connection failed: " . $link->connect_error);
+        }
                 $query = "SELECT img_url from card where card_id in (select card_id from card_user where user_id='" . $_SESSION["id"] . "')";
                 //echo $query;
                 $counter = 0;
-                if ($result = mysqli_query($conn, $query)) {
+                if ($result = mysqli_query($link, $query)) {
 
                     // Fetch one and one row
 
