@@ -19,7 +19,7 @@ primary key (user_id)
 
 create table card_user (
 card_user_id serial,
-card_id varchar(36) unsigned not null,
+card_id varchar(36) not null,
 user_id bigint unsigned not null,
 
 primary key(card_user_id),
