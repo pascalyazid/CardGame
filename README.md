@@ -5,4 +5,5 @@ Users can open a pack of three cards every hour.
 
 Those three cards will be added to their collection.
 
+https://pascalyazid.com/CardGame/
 
