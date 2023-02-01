@@ -75,7 +75,7 @@
       $json = json_decode($json);
       $cardName = $json->name;
       if(isset($json->image_uris->normal)) {
-        saveCards($json->id, $conn, $json->image_uris->normal);
+        saveCards($json->id, $link, $json->image_uris->normal);
         return $json->uri;
       }
       else{
